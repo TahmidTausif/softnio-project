@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail and Cart Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <!-- Product Detail Section -->
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <div class="flex gap-6">
+            <!-- Product Image -->
+            <div class="w-1/2">
+                <img id="product-image" src="images/watch-purple.png" alt="Smart Watch" class="rounded-lg shadow-md">
+            </div>
+
+            <!-- Product Details -->
+            <div class="w-1/2">
+                <h1 class="text-2xl font-bold text-gray-800">Classy Modern Smart Watch</h1>
+                <div class="flex items-center mt-2">
+                    <div class="text-yellow-500">&#9733; &#9733; &#9733; &#9733; &#9734;</div>
+                    <span class="text-sm text-gray-600 ml-2">(2 Reviews)</span>
+                </div>
+                <p class="text-gray-500 mt-4">I must explain to you how all this mistaken idea of denouncing pleasure
+                    and praising pain was born.</p>
+
+                <div class="mt-6">
+                    <p class="text-sm text-gray-600">Type: <span class="font-medium">Watch</span></p>
+                    <p class="text-sm text-gray-600">Model Number: <span class="font-medium">Forerunner 290XT</span></p>
+                </div>
+
+                <!-- Band Color Options -->
+                <div class="mt-6">
+                    <span class="block text-sm text-gray-600">Band Color:</span>
+                    <div class="flex gap-2 mt-2">
+                        <button class="color-option w-6 h-6 rounded-full bg-purple-500 border-2 border-transparent"
+                            data-color="Purple" data-image="images/watch-purple.png"></button>
+                        <button class="color-option w-6 h-6 rounded-full bg-green-500 border-2 border-transparent"
+                            data-color="Cyan" data-image="images/watch-cyan.png"></button>
+                        <button class="color-option w-6 h-6 rounded-full bg-blue-500 border-2 border-transparent"
+                            data-color="Blue" data-image="images/watch-blue.png"></button>
+                        <button class="color-option w-6 h-6 rounded-full bg-black border-2 border-transparent"
+                            data-color="Black" data-image="images/watch-black.png"></button>
+                    </div>
+                </div>
+
+                <!-- Wrist Size Options -->
+                <div class="mt-6">
+                    <span class="block text-sm text-gray-600">Wrist Size:</span>
+                    <div class="flex gap-2 mt-2">
+                        <button class="size-option px-3 py-1 border border-gray-300 rounded text-sm" data-size="S"
+                            data-price="69">S $69</button>
+                        <button class="size-option px-3 py-1 border border-gray-300 rounded text-sm" data-size="M"
+                            data-price="79">M $79</button>
+                        <button class="size-option px-3 py-1 border border-gray-300 rounded text-sm" data-size="L"
+                            data-price="89">L $89</button>
+                        <button
+                            class="size-option px-3 py-1 border border-gray-300 rounded bg-gray-800 text-white text-sm"
+                            data-size="XL" data-price="99">XL $99</button>
+                    </div>
+                </div>
+
+                <!-- Add to Cart Button -->
+                <div class="mt-6 flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <button id="decrement" class="px-2 py-1 border border-gray-300 rounded">-</button>
+                        <span id="quantity" class="px-4 py-1 border border-gray-300 rounded">0</span>
+                        <button id="increment" class="px-2 py-1 border border-gray-300 rounded">+</button>
+                    </div>
+                    <button id="add-to-cart"
+                        class="bg-purple-600 text-white px-6 py-2 rounded shadow hover:bg-purple-700">Add to
+                        Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-1/2 p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Your Cart</h2>
+
+            <table id="cart-table" class="w-full text-left">
+                <thead>
+                    <tr class="text-gray-600">
+                        <th>Image</th> <!-- New Image Column -->
+                        <th>Item</th>
+                        <th>Color</th>
+                        <th>Size</th>
+                        <th>Qnt</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <div class="flex justify-between items-center mt-4">
+                <span id="total-price" class="text-lg font-medium">Total: $0.00</span>
+                <div class="flex gap-4">
+                    <button id="continue-shopping" class="px-4 py-2 border border-gray-300 rounded">Continue
+                        Shopping</button>
+                    <button id="checkout-btn"
+                        class="bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for functionality
+        let quantity = 0;
+        const cart = [];
+
+        const decrementBtn = document.getElementById('decrement');
+        const incrementBtn = document.getElementById('increment');
+        const quantityDisplay = document.getElementById('quantity');
+        const addToCartBtn = document.getElementById('add-to-cart');
+        const cartModal = document.getElementById('cart-modal');
+        const continueShoppingBtn = document.getElementById('continue-shopping');
+        const cartTable = document.getElementById('cart-table').querySelector('tbody');
+        const totalPriceDisplay = document.getElementById('total-price');
+        const productImage = document.getElementById('product-image');
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        let selectedColor = 'Purple';
+        let selectedSize = 'XL';
+        let selectedPrice = 99;
+
+        // Handle Quantity
+        decrementBtn.addEventListener('click', () => {
+            if (quantity > 0) {
+                quantity--;
+                quantityDisplay.textContent = quantity;
+            }
+        });
+
+        incrementBtn.addEventListener('click', () => {
+            quantity++;
+            quantityDisplay.textContent = quantity;
+        });
+
+        // Handle Color Selection
+        document.querySelectorAll('.color-option').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('border-gray-800'));
+                button.classList.add('border-gray-800');
+                selectedColor = button.getAttribute('data-color');
+                const image = button.getAttribute('data-image');
+                productImage.src = image;
+            });
+        });
+
+        // Handle Size Selection
+        document.querySelectorAll('.size-option').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove('bg-gray-800', 'text-white'));
+                button.classList.add('bg-gray-800', 'text-white');
+                selectedSize = button.getAttribute('data-size');
+                selectedPrice = parseFloat(button.getAttribute('data-price'));
+            });
+        });
+
+        // Add to Cart
+        addToCartBtn.addEventListener('click', () => {
+            if (quantity > 0) {
+                const price = selectedPrice * quantity;
+                const image = productImage.src;  // Get the current product image URL
+                cart.push({ item: 'Classy Modern Smart Watch', color: selectedColor, size: selectedSize, quantity, price, image });
+                updateCart();
+                showCartModal();
+            }
+        });
+
+        function updateCart() {
+            cartTable.innerHTML = '';
+            let total = 0;
+            cart.forEach(({ item, color, size, quantity, price, image }) => {
+                total += price;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+
+                    <td><img src="${image}" alt="${color} ${item}" class="w-16 h-16 object-contain"></td> <!-- Product Image -->
+                    <td>${item}</td>
+                    <td>${color}</td>
+                    <td>${size}</td>
+                    <td>${quantity}</td>
+                    <td>$${price.toFixed(2)}</td>
+                `;
+                cartTable.appendChild(row);
+            });
+            totalPriceDisplay.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function showCartModal() {
+            cartModal.classList.remove('hidden');
+        }
+
+        continueShoppingBtn.addEventListener('click', () => {
+            cartModal.classList.add('hidden');
+        });
+
+        checkoutBtn.addEventListener('click', () => {
+            // Clear the cart
+            cart.length = 0; // Clears the cart array
+            updateCart(); // Updates the cart table (will be empty now)
+            cartModal.classList.add('hidden'); // Close the modal
+        });
+    </script>
+</body>
+
+</html>
