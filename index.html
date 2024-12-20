@@ -86,7 +86,7 @@
             <table id="cart-table" class="w-full text-left">
                 <thead>
                     <tr class="text-gray-600">
-                        <th>Image</th> <!-- New Image Column -->
+                        <th>Image</th> 
                         <th>Item</th>
                         <th>Color</th>
                         <th>Size</th>
@@ -168,7 +168,7 @@
         addToCartBtn.addEventListener('click', () => {
             if (quantity > 0) {
                 const price = selectedPrice * quantity;
-                const image = productImage.src;  // Get the current product image URL
+                const image = productImage.src;  
                 cart.push({ item: 'Classy Modern Smart Watch', color: selectedColor, size: selectedSize, quantity, price, image });
                 updateCart();
                 showCartModal();
@@ -204,10 +204,9 @@
         });
 
         checkoutBtn.addEventListener('click', () => {
-            // Clear the cart
-            cart.length = 0; // Clears the cart array
-            updateCart(); // Updates the cart table (will be empty now)
-            cartModal.classList.add('hidden'); // Close the modal
+            cart.length = 0; 
+            updateCart(); 
+            cartModal.classList.add('hidden'); 
         });
     </script>
 </body>
